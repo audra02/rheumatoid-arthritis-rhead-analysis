@@ -193,37 +193,3 @@ doc <- body_add_flextable(doc, ft)
 print(doc, target = "reports/differential_methylation_summary_wilcox.docx")
 
 
-library(ggplot2)
-#kokybes kontrole 
-mean_meth <- rowMeans(data)
-
-qc_df <- data.frame(
-  relation_to_island = probe_annot$relation_to_island,
-  mean_methylation = mean_meth
-)
-
-qc_df$region <- qc_df$relation_to_island
-
-qc_df$region[qc_df$region %in% c("N_Shore", "S_Shore")] <- "Shore"
-qc_df$region[qc_df$region %in% c("N_Shelf", "S_Shelf")] <- "Shelf"
-qc_df$region[qc_df$region == "OpenSea"] <- "OpenSea"
-qc_df$region[qc_df$region == "Island"] <- "Island"
-
-#paliekam tik reikalingas grupes
-qc_df <- qc_df[qc_df$region %in% c("Island", "Shore", "Shelf", "OpenSea"), ]
-qc_df$region <- factor(qc_df$region,
-                       levels = c("Island", "Shore", "Shelf", "OpenSea"))
-
-aggregate(mean_methylation ~ region, data = qc_df, mean)
-
-
-#grafikas
-region_means <- aggregate(mean_methylation ~ region, data = qc_df, mean)
-
-ggplot(qc_df, aes(x = region, y = mean_methylation)) +
-  geom_boxplot() +
-  geom_point(data = region_means, aes(x = region, y = mean_methylation),
-             size = 3) +
-  labs(title = "Vidutinis DNR metilinimo lygis pagal CpG regioną",
-       x = "Genominis regionas",
-       y = "Vidutinis metilinimo lygis")
