@@ -3,14 +3,24 @@ library(annmatrix)
 # Užkraunami duomenys
 obj <- readRDS("rhead.rds")
 
+# Sukuriamas kelias į plots aplanką
+plots_dir <- file.path("..", "plots")
+
+# Jei plots aplanko nėra, jis sukuriamas
+if (!dir.exists(plots_dir)) {
+  dir.create(plots_dir, recursive = TRUE)
+}
+
 # =========================
 # KOKYBĖS KONTROLĖ #1
 # Ar duomenyse matoma tikėtina DNR metilinimo tendencija
 # skirtinguose CpG regionuose?
 # =========================
 
+# Išsitraukiamos CpG anotacijos
 ann <- obj@''
 
+# Sukuriamos regionų grupės
 region <- ann$relation_to_island
 region2 <- rep(NA_character_, length(region))
 
@@ -19,26 +29,33 @@ region2[region %in% c("N_Shore", "S_Shore")] <- "shore"
 region2[region %in% c("N_Shelf", "S_Shelf")] <- "shelf"
 region2[region == "OpenSea"] <- "sea"
 
+# Paliekamos tik reikalingos CpG pozicijos
 keep <- !is.na(region2)
 
+# Apskaičiuojamas vidutinis beta kiekvienai CpG pozicijai
 mean_beta <- rowMeans(obj[keep, ], na.rm = TRUE)
 
+# Sukuriamas duomenų rėmelis grafikui
 df <- data.frame(
   beta = mean_beta,
   region = factor(region2[keep], levels = c("island", "shore", "shelf", "sea"))
 )
 
+# Santrauka
 print(tapply(df$beta, df$region, summary))
 print(tapply(df$beta, df$region, mean))
 
+# Tankio kreivės
 d_island <- density(df$beta[df$region == "island"], na.rm = TRUE)
 d_shore  <- density(df$beta[df$region == "shore"],  na.rm = TRUE)
 d_shelf  <- density(df$beta[df$region == "shelf"],  na.rm = TRUE)
 d_sea    <- density(df$beta[df$region == "sea"],    na.rm = TRUE)
 
+# Automatinė y ašies riba
 ymax <- max(d_island$y, d_shore$y, d_shelf$y, d_sea$y) * 1.05
 
-png("qc1_cpg_regions.png", width = 1200, height = 900, res = 150)
+# Išsaugo į PNG
+png(file.path(plots_dir, "qc1_cpg_regions.png"), width = 1200, height = 900, res = 150)
 
 par(
   mar = c(5, 5, 4, 8),
@@ -109,8 +126,10 @@ legend(
 # pagal ląstelės tipą.
 # =========================
 
+# Išsitraukiamos mėginių anotacijos
 cann <- attr(obj, ".annmatrix.cann")
 
+# Tikslus ląstelės tipo stulpelio pavadinimas
 cell_col <- "celltype"
 
 # Parodomas ląstelės tipo pasiskirstymas
@@ -123,16 +142,20 @@ vars <- apply(obj, 1, var, na.rm = TRUE)
 top_n <- 10000
 top_idx <- order(vars, decreasing = TRUE)[1:top_n]
 
+# Sukuriama mažesnė matrica koreliacijos skaičiavimui
 mat <- obj[top_idx, ]
 
+# Apskaičiuojama mėginių koreliacijų matrica
 cor_mat <- cor(mat, use = "pairwise.complete.obs", method = "pearson")
 
 # Mėginiai surikiuojami pagal ląstelės tipą
 ord_cell <- order(as.character(cann[[cell_col]]), colnames(obj))
 
+# Pertvarkoma koreliacijų matrica
 cor_ord <- cor_mat[ord_cell, ord_cell]
 
-png("qc2_all_samples_heatmap_by_celltype.png", width = 1400, height = 1200, res = 150)
+# Išsaugoma į PNG
+png(file.path(plots_dir, "qc2_all_samples_heatmap_by_celltype.png"), width = 1400, height = 1200, res = 150)
 
 par(mar = c(6, 6, 4, 2))
 image(
