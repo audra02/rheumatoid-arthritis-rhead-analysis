@@ -192,4 +192,42 @@ doc <- body_add_flextable(doc, ft)
 
 print(doc, target = "reports/differential_methylation_summary_wilcox.docx")
 
+#heatmap
+install.packages("pheatmap")
+library(pheatmap)
 
+data <- readRDS("data/rhead.rds")
+sample_annot <- attr(data, ".annmatrix.cann")
+
+# 1. Suskaiciuojame kiekvienos CpG pozicijos dispersija
+cpg_var <- apply(data, 1, var)
+
+# 2. Atsirenkame į00 labiausiai kintanciu CpG
+top_idx <- order(cpg_var, decreasing = TRUE)[1:500]
+
+heatmap_data <- data[top_idx, ]
+
+# 3. Anotacija stulpeliams
+annotation_col <- data.frame(
+  CellType = sample_annot$celltype,
+  Diagnosis = sample_annot$diagnosis
+)
+
+rownames(annotation_col) <- colnames(heatmap_data)
+
+# 4. Heatmap
+pheatmap(
+  heatmap_data,
+  scale = "row",
+  show_rownames = FALSE,
+  show_colnames = FALSE,
+  annotation_col = annotation_col,
+  main = "500 labiausiai kintančių CpG pozicijų heatmap"
+)
+
+
+
+
+
+help("heatmap")
+help("apply")
