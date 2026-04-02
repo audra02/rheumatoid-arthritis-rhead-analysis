@@ -63,135 +63,130 @@ ggplot(chr_tab, aes(x = chr, y = count)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
 
 
-#aprosamoji statistika 
-# duomenys
-data <- readRDS("data/rhead.rds")
-sample_annot <- attr(data, ".annmatrix.cann")
-
-# funkcija vienam lasteliu tipui
-make_summary_for_celltype <- function(beta_mat, annot, celltype_name) {
-  
-  idx <- annot$celltype == celltype_name
-  sub_beta <- beta_mat[, idx, drop = FALSE]
-  sub_annot <- annot[idx, , drop = FALSE]
-  
-  ra_idx <- sub_annot$diagnosis == "ra"
-  control_idx <- sub_annot$diagnosis == "control"
-  
-  pvals <- numeric(nrow(sub_beta))
-  med_diff <- numeric(nrow(sub_beta))
-  
-  for (i in 1:nrow(sub_beta)) {
-    x_ra <- sub_beta[i, ra_idx]
-    x_control <- sub_beta[i, control_idx]
-    
-    # Wilcoxon rank sum test, two-sided
-    pvals[i] <- wilcox.test(x_ra, x_control, alternative = "two.sided")$p.value
-    
-    # kryptis pagal medianu skirtuma
-    med_diff[i] <- median(x_ra) - median(x_control)
-  }
-  
-  # BH korekcija, kad butu arciau straipsnio logikos
-  qvals <- p.adjust(pvals, method = "BH")
-  
-  hypo <- med_diff < 0
-  hyper <- med_diff > 0
-  
-  result <- data.frame(
-    Cell_type = c(celltype_name, celltype_name),
-    Direction = c("Hypomethylated", "Hypermethylated"),
-    
-    Raw_P = c(
-      sum(pvals < 0.05 & hypo),
-      sum(pvals < 0.05 & hyper)
-    ),
-    
-    Diff_more_10 = c(
-      sum(abs(med_diff) > 0.10 & pvals < 0.05 & hypo),
-      sum(abs(med_diff) > 0.10 & pvals < 0.05 & hyper)
-    ),
-    
-    Diff_1_to_10 = c(
-      sum(abs(med_diff) >= 0.01 & abs(med_diff) <= 0.10 & pvals < 0.05 & hypo),
-      sum(abs(med_diff) >= 0.01 & abs(med_diff) <= 0.10 & pvals < 0.05 & hyper)
-    ),
-    
-    FDR_q = c(
-      sum(qvals < 0.05 & hypo),
-      sum(qvals < 0.05 & hyper)
-    ),
-    
-    FDR_q_diff_more_1 = c(
-      sum(qvals < 0.05 & abs(med_diff) > 0.01 & hypo),
-      sum(qvals < 0.05 & abs(med_diff) > 0.01 & hyper)
-    )
-  )
-  
-  return(result)
-}
-
-# 4 lasteliu tipu lentele
-
-final_table <- rbind(
-  make_summary_for_celltype(data, sample_annot, "mono"),
-  make_summary_for_celltype(data, sample_annot, "bcell"),
-  make_summary_for_celltype(data, sample_annot, "tcd4m"),
-  make_summary_for_celltype(data, sample_annot, "tcd4n")
-)
-
-final_table$Cell_type <- factor(
-  final_table$Cell_type,
-  levels = c("mono", "bcell", "tcd4m", "tcd4n"),
-  labels = c("CD14+ monocytes", "CD19+ B cells", "CD4+ memory T cells", "CD4+ naive T cells")
-)
-
-final_table
-
+## Paketai
 install.packages("flextable")
 install.packages("officer")
+install.packages("dplyr")
 
 library(flextable)
 library(officer)
+library(dplyr)
 
-ft <- flextable(final_table)
+# Duomenys
+data <- readRDS("data/rhead.rds")
+sample_annot <- attr(data, ".annmatrix.cann")
+
+# Pasitikrinam, kaip vadinasi diagnoziu grupes
+unique(sample_annot$diagnosis)
+
+# Jei reikia, pasikeisk "control" i tikra savo kontrolines grupes pavadinima
+ra <- sample_annot %>% filter(diagnosis == "ra")
+ctrl <- sample_annot %>% filter(diagnosis == "control")
+
+# Pagalbines funkcijos
+mean_sd <- function(x, digits = 1) {
+  paste0(round(mean(x, na.rm = TRUE), digits), " ± ", round(sd(x, na.rm = TRUE), digits))
+}
+
+n_pct <- function(x, value, digits = 1) {
+  n <- sum(x == value, na.rm = TRUE)
+  p <- round(100 * n / sum(!is.na(x)), digits)
+  paste0(n, " (", p, "%)")
+}
+
+# p reiksmes
+p_age <- wilcox.test(age ~ diagnosis, data = sample_annot)$p.value
+p_smoking <- chisq.test(table(sample_annot$diagnosis, sample_annot$smoking))$p.value
+p_sex <- chisq.test(table(sample_annot$diagnosis, sample_annot$sex))$p.value
+p_race <- chisq.test(table(sample_annot$diagnosis, sample_annot$race))$p.value
+
+# Aprašomoji statistika
+desc_table <- data.frame(
+  Rodiklis = c(
+    "Mėginių skaičius",
+    "Amžius, vidurkis ± SD",
+    "Rūkymas: taip, n (%)",
+    "Rūkymas: ne, n (%)",
+    "Moterų, n (%)",
+    "Caucasian, n (%)",
+    "QC detection, vidurkis ± SD",
+    "QC purity, vidurkis ± SD",
+    "QC IAC, vidurkis ± SD"
+  ),
+  RA = c(
+    nrow(ra),
+    mean_sd(ra$age),
+    n_pct(ra$smoking, "yes"),
+    n_pct(ra$smoking, "no"),
+    n_pct(ra$sex, "F"),
+    n_pct(ra$race, "caucasian"),
+    mean_sd(ra$qc_detection, 3),
+    mean_sd(ra$qc_purity, 3),
+    mean_sd(ra$qc_iac, 3)
+  ),
+  Kontrole = c(
+    nrow(ctrl),
+    mean_sd(ctrl$age),
+    n_pct(ctrl$smoking, "yes"),
+    n_pct(ctrl$smoking, "no"),
+    n_pct(ctrl$sex, "F"),
+    n_pct(ctrl$race, "caucasian"),
+    mean_sd(ctrl$qc_detection, 3),
+    mean_sd(ctrl$qc_purity, 3),
+    mean_sd(ctrl$qc_iac, 3)
+  ),
+  P_reiksme = c(
+    "",
+    round(p_age, 4),
+    round(p_smoking, 4),
+    "",
+    round(p_sex, 4),
+    round(p_race, 4),
+    "",
+    "",
+    ""
+  ),
+  stringsAsFactors = FALSE
+)
+
+desc_table
+
+# Flextable
+ft <- flextable(desc_table)
 
 ft <- set_header_labels(
   ft,
-  Cell_type = "Cell type",
-  Direction = "",
-  Raw_P = "CpGs with raw P < 0.05",
-  Diff_more_10 = "CpGs with absolute median methylation difference of >10%",
-  Diff_1_to_10 = "CpGs with absolute median methylation difference between 1% and 10%",
-  FDR_q = "CpGs with FDR q < 0.05",
-  FDR_q_diff_more_1 = "CpGs with FDR q < 0.05 and median methylation difference >1%"
+  Rodiklis = "Rodiklis",
+  RA = "RA",
+  Kontrole = "Kontrolė",
+  P_reiksme = "p reikšmė"
 )
 
-ft <- merge_v(ft, j = "Cell_type")
-ft <- valign(ft, j = "Cell_type", valign = "top")
-
-ft <- align(ft, align = "center", part = "all")
-ft <- align(ft, j = c("Cell_type", "Direction"), align = "left", part = "body")
-
 ft <- bold(ft, part = "header")
+ft <- align(ft, align = "center", part = "all")
+ft <- align(ft, j = 1, align = "left", part = "body")
 ft <- font(ft, fontname = "Times New Roman", part = "all")
 ft <- fontsize(ft, size = 11, part = "all")
-
-ft <- border_remove(ft)
-ft <- hline_top(ft, border = fp_border(width = 1.2), part = "all")
-ft <- hline(ft, i = 2, border = fp_border(width = 0.8), part = "body")
-ft <- hline(ft, i = 4, border = fp_border(width = 0.8), part = "body")
-ft <- hline(ft, i = 6, border = fp_border(width = 0.8), part = "body")
-ft <- hline_bottom(ft, border = fp_border(width = 1.2), part = "all")
-
+ft <- theme_box(ft)
 ft <- autofit(ft)
 
+ft <- set_caption(
+  ft,
+  caption = "Lentelė 1. Mėginių anotacijų aprašomoji statistika pagal diagnozės grupę"
+)
+
+ft
+
+# Išsaugojimas į Word failą
 doc <- read_docx()
-doc <- body_add_par(doc, "Differential methylation summary by cell type", style = "Normal")
+doc <- body_add_par(
+  doc,
+  "Mėginių anotacijų aprašomoji statistika",
+  style = "heading 1"
+)
 doc <- body_add_flextable(doc, ft)
 
-print(doc, target = "reports/differential_methylation_summary_wilcox.docx")
-
+print(doc, target = "reports/aprasomoji_statistika_meginiu_lygiu.docx")
 #heatmap
 install.packages("pheatmap")
 library(pheatmap)
@@ -227,7 +222,26 @@ pheatmap(
 
 
 
-
-
 help("heatmap")
 help("apply")
+
+
+# rukymo grafikas 
+table(sample_annot$diagnosis)
+table(sample_annot$smoking)
+
+#grafikas 
+library(ggplot2)
+library(dplyr)
+
+
+# grafikas
+ggplot(sample_annot, aes(x = diagnosis, fill = smoking)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(
+    title = "Rūkymo pasiskirstymas pagal diagnozę",
+    x = "Diagnozė",
+    y = "Proporcija",
+    fill = "Rūkymas"
+  ) +theme_classic()
