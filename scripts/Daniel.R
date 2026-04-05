@@ -1,4 +1,4 @@
-data <- readRDS("data/rhead.rds")
+data <- readRDS("rhead.rds")
 
 str(data)
 dim(data)
@@ -192,7 +192,7 @@ print(doc, target = "reports/aprasomoji_statistika_meginiu_lygiu.docx")
 install.packages("pheatmap")
 library(pheatmap)
 
-data <- readRDS("data/rhead_filtered.rds")
+data <- readRDS("rhead_filtered.rds")
 sample_annot <- attr(data, ".annmatrix.cann")
 
 cpg_var <- apply(data, 1, var, na.rm = TRUE)

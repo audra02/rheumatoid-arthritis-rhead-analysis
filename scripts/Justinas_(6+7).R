@@ -9,7 +9,7 @@
 # 0. DUOMENŲ ĮKĖLIMAS
 # -----------------------------
 
-obj <- readRDS("data/rhead.rds")
+obj <- readRDS("rhead.rds")
 
 # Pagrindinė beta reikšmių matrica
 beta <- obj
