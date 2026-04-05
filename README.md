@@ -23,7 +23,7 @@ Repozitorijoje naudojama tokia struktūra:
 - `README.md` – projekto aprašymas
 - `rheumatoid-arthritis-rhead-analysis.Rproj` – RStudio projekto failas
 
-## Komandos nariai ir jų dalys
+## Grupės nariai 
 
 Projektą atliko:
 - **Audra** – 4 ir 5 užduotys
