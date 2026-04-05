@@ -32,19 +32,18 @@ Projektą atliko:
 
 
 ## Skriptai
+### `scripts/4_5_QC.R`
+Šiame skripte atlikta kokybės kontrolės analizė:
+- metilinimo pasiskirstymo įvertinimas skirtinguose CpG regionuose
+- mėginių panašumo analizė pagal ląstelių tipus
+- PCA analizė
+  
 
 ### `scripts/Daniel.R`
 Šiame skripte atlikta:
 - duomenų rinkinio aprašomoji analizė
 - pagrindiniai aprašomieji grafikai
 - heatmap sudarymas iš labiausiai kintančių CpG pozicijų
-
-
-### `scripts/4_5_QC.R`
-Šiame skripte atlikta kokybės kontrolės analizė:
-- metilinimo pasiskirstymo įvertinimas skirtinguose CpG regionuose
-- mėginių panašumo analizė pagal ląstelių tipus
-- PCA analizė
 
 
 ### `scripts/Justinas_(6+7).R`
