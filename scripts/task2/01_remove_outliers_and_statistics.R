@@ -1,4 +1,22 @@
 # ------------------------------------------------
+# REZULTATŲ APRAŠYMAS
+# ------------------------------------------------
+# Šiame skripte sukuriamas objektas „results“, kuriame yra:
+#
+# CpG          – citozino identifikatorius
+# p_value      – nekoreguota p reikšmė (Wilkoksono testas tarp RA ir kontrolės grupių)
+# effect_size  – efekto dydis (vidurkių skirtumas: RA – control)
+# p_adj        – koreguota p reikšmė pagal FDR (Benjamini–Hochberg metodas)
+# significant  – loginė reikšmė (TRUE/FALSE), ar CpG yra statistiškai reikšmingas (p_adj < 0.05)
+#
+# Taip pat išsaugomas:
+# rhead_filtered.rds – filtruotas beta reikšmių rinkinys (be outlier mėginių, su anotacijomis)
+# results.rds        – visų CpG statistinės analizės rezultatai
+# ------------------------------------------------
+
+
+
+# ------------------------------------------------
 # 0. DUOMENŲ ĮKĖLIMAS
 # ------------------------------------------------
 
@@ -64,6 +82,11 @@ results <- data.frame(
   effect_size = effect_size
 )
 
+# Koreguotos p reikšmės
+results$p_adj <- p.adjust(results$p_value, method = "fdr")
+
+# Statistiškai reikšmingi CpG po korekcijos
+results$significant <- results$p_adj < 0.05
 
 # ------------------------------------------------
 # 5. IŠSAUGOJIMAS
