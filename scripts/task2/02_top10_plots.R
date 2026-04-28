@@ -1,1 +1,1 @@
-#task: 3. Atvaizduoti 10 pačių patikimiausių citozinų grafiškai
+#task: 2. Atvaizduoti 10 pačių patikimiausių citozinų grafiškai
