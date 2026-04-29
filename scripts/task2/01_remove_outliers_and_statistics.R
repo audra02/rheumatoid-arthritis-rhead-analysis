@@ -1,37 +1,27 @@
 # ------------------------------------------------
 # REZULTATŲ APRAŠYMAS
 # ------------------------------------------------
-# Šiame skripte sukuriamas objektas „results“, kuriame yra:
+# Šis skriptas pašalina iš ankstesnių QC žingsnių nustatytus outlier mėginius,
+# kiekvienai CpG pozicijai palygina RA ir kontrolės grupes Wilcoxon testu
+# ir sukuria rezultatų lentelę su p reikšmėmis, efekto dydžiais,
+# koreguotomis p reikšmėmis bei reikšmingumo žyma.
 #
-# CpG          – citozino identifikatorius
-# p_value      – nekoreguota p reikšmė (Wilkoksono testas tarp RA ir kontrolės grupių)
-# effect_size  – efekto dydis (vidurkių skirtumas: RA – control)
-# p_adj        – koreguota p reikšmė pagal FDR (Benjamini–Hochberg metodas)
-# significant  – loginė reikšmė (TRUE/FALSE), ar CpG yra statistiškai reikšmingas (p_adj < 0.05)
-#
-# Taip pat išsaugomas:
-# rhead_filtered.rds – filtruotas beta reikšmių rinkinys (be outlier mėginių, su anotacijomis)
-# results.rds        – visų CpG statistinės analizės rezultatai
+# Sukuriami failai:
+# - rhead_filtered.rds – filtruotas annmatrix objektas be outlier mėginių
+# - results.rds        – visų CpG statistinės analizės rezultatai
 # ------------------------------------------------
 
-
+library(annmatrix)
 
 # ------------------------------------------------
-# 0. DUOMENŲ ĮKĖLIMAS
+# 1. DUOMENŲ ĮKĖLIMAS
 # ------------------------------------------------
 
 obj <- readRDS("rhead.rds")
 
-# Pagrindinė beta reikšmių matrica
-beta <- obj
-
-# CpG ir mėginių anotacijos
-probe_anno <- attr(obj, ".annmatrix.rann")
-sample_anno <- attr(obj, ".annmatrix.cann")
-
 
 # ------------------------------------------------
-# 1. OUTLIER PAŠALINIMAS
+# 2. OUTLIER PAŠALINIMAS
 # ------------------------------------------------
 
 outliers <- c(
@@ -39,61 +29,53 @@ outliers <- c(
   "GSM3833638_9704031135_R02C01",
   "GSM3833716_9259684070_R01C02",
   "GSM3833615_9704031135_R05C01",
-  "GSM3833773_9274651074_R06C01"
+  "GSM3833773_9274651074_R06C01",
+  "GSM3833617_9704031129_R05C01",
+  "GSM3833483_9406922147_R06C02",
+  "GSM3833453_9406922031_R05C02",
+  "GSM3833478_9407201070_R06C02",
+  "GSM3833640_9704031140_R01C01"
 )
 
-beta <- beta[, !colnames(beta) %in% outliers]
-sample_anno <- sample_anno[!sample_anno$id %in% outliers, ]
-
-# sulygiuojame sample_anno eiliškumą su beta stulpeliais
-sample_anno <- sample_anno[match(colnames(beta), sample_anno$id), ]
+obj <- obj[, !colnames(obj) %in% outliers]
 
 
 # ------------------------------------------------
-# 2. GRUPIŲ APIBRĖŽIMAS
+# 3. GRUPIŲ APIBRĖŽIMAS
 # ------------------------------------------------
 
-group <- tolower(sample_anno$diagnosis)
-
-ra_idx <- which(group == "ra")
-control_idx <- which(group == "control")
+ra_idx <- which(obj$diagnosis == "ra")
+control_idx <- which(obj$diagnosis == "control")
 
 
 # ------------------------------------------------
-# 3. HIPOTEZIŲ TESTAVIMAS
+# 4. HIPOTEZIŲ TESTAVIMAS
 # ------------------------------------------------
 
-p_values <- apply(beta, 1, function(row) {
-  wilcox.test(row[ra_idx], row[control_idx])$p.value
-})
+p_values <- apply(obj, 1, function(x)
+  wilcox.test(x[ra_idx], x[control_idx])$p.value
+)
 
-effect_size <- apply(beta, 1, function(row) {
-  mean(row[ra_idx]) - mean(row[control_idx])
-})
+effect_size <- rowMeans(obj[, ra_idx]) - rowMeans(obj[, control_idx])
 
 
 # ------------------------------------------------
-# 4. REZULTATŲ LENTELĖ
+# 5. REZULTATŲ LENTELĖ
 # ------------------------------------------------
 
 results <- data.frame(
-  CpG = rownames(beta),
+  CpG = rownames(obj),
   p_value = p_values,
   effect_size = effect_size
 )
 
-# Koreguotos p reikšmės
 results$p_adj <- p.adjust(results$p_value, method = "fdr")
-
-# Statistiškai reikšmingi CpG po korekcijos
 results$significant <- results$p_adj < 0.05
 
+
 # ------------------------------------------------
-# 5. IŠSAUGOJIMAS
+# 6. IŠSAUGOJIMAS
 # ------------------------------------------------
 
-attr(beta, ".annmatrix.cann") <- sample_anno
-attr(beta, ".annmatrix.rann") <- probe_anno
-
-saveRDS(beta, "rhead_filtered.rds")
+saveRDS(obj, "rhead_filtered.rds")
 saveRDS(results, "results.rds")

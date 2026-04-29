@@ -1,20 +1,28 @@
-#task: 3. P-verčių histograma
+# ------------------------------------------------
+# 03_pvalue_histogram.R
+# ------------------------------------------------
+# Atvaizduoja p-verčių histogramą (0–1 intervalas, 100 intervalų)
+# ir suskaičiuoja statistiškai reikšmingų CpG skaičių.
+# ------------------------------------------------
 
 library(ggplot2)
 
 # ------------------------------------------------
-# 1. READ DATA
+# 1. DUOMENŲ ĮKĖLIMAS
 # ------------------------------------------------
 
 results <- readRDS("results.rds")
 
+dir.create("plots", showWarnings = FALSE)
+
+
 # ------------------------------------------------
-# 2. HISTOGRAM
+# 2. HISTOGRAMA
 # ------------------------------------------------
 
 p <- ggplot(results, aes(x = p_value)) +
   geom_histogram(
-    breaks = seq(0, 1, by = 0.01),   # 100 bins
+    breaks = seq(0, 1, by = 0.01),
     color = "black",
     fill = "steelblue"
   ) +
@@ -25,26 +33,21 @@ p <- ggplot(results, aes(x = p_value)) +
     y = "Count"
   )
 
-# ------------------------------------------------
-# 3. SAVE PLOT
-# ------------------------------------------------
-
-dir.create("plots", showWarnings = FALSE)
-
 ggsave(
-  filename = "plots/pvalue_histogram.png",
-  plot = p,
+  "plots/pvalue_histogram.png",
+  p,
   width = 6,
   height = 4,
   dpi = 300
 )
 
+
 # ------------------------------------------------
-# 4. COUNT SIGNIFICANT CpGs
+# 3. REIKŠMINGŲ CpG SKAIČIUS
 # ------------------------------------------------
 
-# raw p-values
-sum(results$p_value < 0.05)
+n_raw <- sum(results$p_value < 0.05)
+n_adj <- sum(results$p_adj < 0.05)
 
-# adjusted p-values (already computed)
-sum(results$padj < 0.05)
+n_raw
+n_adj

@@ -1,37 +1,45 @@
-#task: 2. Atvaizduoti 10 pačių patikimiausių citozinų grafiškai
+# ------------------------------------------------
+# 02_top10_plots.R
+# ------------------------------------------------
+# Atvaizduoja 10 patikimiausių CpG pozicijų:
+# pirmiausia atrenkamos reikšmingos pozicijos (p_adj < 0.05),
+# tada pasirenkamos 10 su didžiausiu absoliučiu efekto dydžiu.
+# Grafikai išsaugomi aplanke plots/.
+# ------------------------------------------------
 
+library(annmatrix)
 library(ggplot2)
 
 # ------------------------------------------------
-# 1. NUSKAITYMAS
+# 1. DUOMENŲ ĮKĖLIMAS
 # ------------------------------------------------
 
-beta <- readRDS("rhead_filtered.rds")
+obj <- readRDS("rhead_filtered.rds")
 results <- readRDS("results.rds")
 
-sample_anno <- attr(beta, ".annmatrix.cann")
-group <- tolower(sample_anno$diagnosis)
+dir.create("plots", showWarnings = FALSE)
+
 
 # ------------------------------------------------
-# 2. ATRANKA (patikimiausi CpG)
+# 2. PATIKIMIAUSIŲ CpG ATRANKA
 # ------------------------------------------------
 
-significant <- results[results$padj < 0.05, ]
-
+significant <- results[results$p_adj < 0.05, ]
 top10 <- significant[order(-abs(significant$effect_size)), ][1:10, ]
+
 
 # ------------------------------------------------
 # 3. GRAFIKAI
 # ------------------------------------------------
 
-for (i in 1:10) {
+group <- tolower(obj$diagnosis)
+
+for (i in seq_len(nrow(top10))) {
   
   cpg <- top10$CpG[i]
   
-  values <- beta[cpg, ]
-  
   plot_df <- data.frame(
-    value = as.numeric(values),
+    value = as.numeric(obj[cpg, ]),
     group = group
   )
   
@@ -41,7 +49,7 @@ for (i in 1:10) {
     stat_summary(
       fun = mean,
       geom = "point",
-      shape = 18,      # diamond
+      shape = 18,
       size = 4,
       color = "black"
     ) +
