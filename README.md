@@ -67,6 +67,14 @@ Rezultatai panaudoti atsargiau interpretuojant galimą batch effect.
 
 ## Antros užduoties skriptai
 
+### `scripts/task2/00_find_outliers.R`
+
+Šiame skripte atlikta papildoma išskirtinių mėginių analizė.
+Iš pradinio `rhead.rds` duomenų rinkinio pirmiausia pašalinami anksčiau nustatyti išskirtiniai mėginiai.
+Tada sudaroma dendrograma su mėginių ID, leidžianti vizualiai įvertinti mėginių grupavimąsi ir galimas papildomas išskirtis.
+Remiantis dendrograma ir naujais pastebėjimais, atrenkami papildomi galimi išskirtiniai mėginiai.
+Po jų pašalinimo sudaroma nauja dendrograma.
+
 ### `scripts/task2/01_remove_outliers_and_statistics.R`
 
 Šiame skripte pašalinami ankstesnės kokybės kontrolės metu nustatyti išskirtiniai mėginiai.
@@ -129,4 +137,4 @@ Taip pat buvo paruošti genų sąrašai tolimesnei genų ontologijos analizei.
 ## GitHub repozitorija
 
 Repozitorija:  
-<https://github.com/audra02/rheumatoid-arthritis-rhead-analysis/tree/main>
+<https://github.com/audra02/rheumatoid-arthritis-rhead-analysis
