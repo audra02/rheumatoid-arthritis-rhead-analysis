@@ -17,8 +17,6 @@ library(WGCNA)
 
 obj <- readRDS("rhead.rds")
 
-dir.create("../../plots/task2", showWarnings = FALSE, recursive = TRUE)
-
 known_outliers <- c(
   "GSM3833612_9704031135_R03C01",
   "GSM3833638_9704031135_R02C01",
