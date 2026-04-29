@@ -34,11 +34,7 @@ Repozitorijoje naudojama tokia struktūra:
 
 ## Grupės nariai
 
-Projektą atliko:
-
-- **Audra** – 4 ir 5 užduotys.
-- **Daniel** – 3 ir 8 užduotys.
-- **Justinas** – 6, 7 ir 9 užduotys.
+Projektą atliko: **Audra Stepanauskaitė**, **Daniel Volčak**, **Justinas Tomkevičius**.
 
 ## Pirmos užduoties skriptai
 
