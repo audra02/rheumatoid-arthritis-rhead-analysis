@@ -6,3 +6,4 @@
 rhead_filtered.rds
 rheumatoid-arthritis-rhead-analysis.Rproj
 data/
+*.rds
