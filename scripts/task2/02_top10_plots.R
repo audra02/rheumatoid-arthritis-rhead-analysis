@@ -17,9 +17,6 @@ library(ggplot2)
 obj <- readRDS("rhead_filtered.rds")
 results <- readRDS("results.rds")
 
-dir.create("plots", showWarnings = FALSE)
-
-
 # ------------------------------------------------
 # 2. PATIKIMIAUSIŲ CpG ATRANKA
 # ------------------------------------------------
@@ -66,7 +63,7 @@ for (i in seq_len(nrow(top10))) {
     )
   
   ggsave(
-    filename = paste0("plots/cpg_", i, ".png"),
+    filename = paste0("../../plots/task2/cpg_", i, ".png"),
     plot = p,
     width = 6,
     height = 4,

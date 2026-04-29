@@ -13,9 +13,6 @@ library(ggplot2)
 
 results <- readRDS("results.rds")
 
-dir.create("plots", showWarnings = FALSE)
-
-
 # ------------------------------------------------
 # 2. HISTOGRAMA
 # ------------------------------------------------
@@ -34,7 +31,7 @@ p <- ggplot(results, aes(x = p_value)) +
   )
 
 ggsave(
-  "plots/pvalue_histogram.png",
+  "../../plots/task2/pvalue_histogram.png",
   p,
   width = 6,
   height = 4,
