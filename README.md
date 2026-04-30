@@ -110,10 +110,10 @@ Papildomai pateikiamas grafikas su FDR koreguotomis p reikšmėmis.
 
 ### `scripts/task2/06_prepare_GO.R`
 
-Šiame skripte paruošiami genų sąrašai genų ontologijos analizei.
-`foreground` sąrašui naudojami genai, susiję su patikimiausiais CpG skirtumais.
-`background` sąrašui naudojami genai, susiję su visomis tirtomis CpG pozicijomis.
-Šie failai gali būti naudojami išoriniame GO analizės įrankyje.
+Šiame skripte paruošiami BED failai GO analizei su GREAT įrankiu.
+Kaip background naudojamos visos tirtos CpG pozicijos.
+Foreground rinkiniai sudaromi atskirai pagal metilinimo kryptį: CpG pozicijoms, kuriose labiau metilinta RA grupė, ir CpG pozicijoms, kuriose labiau metilinta kontrolės grupė.
+Šie failai naudojami GREAT analizėje siekiant nustatyti, su kokiomis genų funkcijų kategorijomis siejasi reikšmingi metilinimo skirtumai.
 
 ### `scripts/task2/07_Apzvalgine.R`
 
