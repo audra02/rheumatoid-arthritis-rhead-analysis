@@ -77,10 +77,10 @@ Po jų pašalinimo sudaroma nauja dendrograma.
 
 ### `scripts/task2/01_remove_outliers_and_statistics.R`
 
-Šiame skripte pašalinami ankstesnės kokybės kontrolės metu nustatyti išskirtiniai mėginiai.
-Kiekvienai CpG pozicijai palyginami reumatoidinio artrito ir kontrolinės grupės mėginiai.
-Apskaičiuojamos p reikšmės, efekto dydžiai, metilinimo lygio vidurkiai grupėse ir reikšmingumo žymos.
-Sukuriamas filtruotas `annmatrix` objektas ir rezultatų lentelė tolesnei analizei.
+Šis skriptas pašalina iš ankstesnių kokybės kontrolės žingsnių nustatytus išskirtinius mėginius.
+Kiekvienai CpG pozicijai Wilcoxon testu palyginamos reumatoidinio artrito ir kontrolinės grupės.
+Apskaičiuojamos p reikšmės, efekto dydžiai, FDR metodu koreguotos p reikšmės ir reikšmingumo žyma.
+Sukuriamas filtruotas annmatrix objektas be išskirtinių mėginių ir rezultatų lentelė tolesnei analizei.
 
 ### `scripts/task2/02_top10_plots.R`
 
