@@ -77,22 +77,26 @@ Po jų pašalinimo sudaroma nauja dendrograma.
 
 ### `scripts/task2/01_remove_outliers_and_statistics.R`
 
-Šiame skripte pašalinami ankstesnės kokybės kontrolės metu nustatyti išskirtiniai mėginiai.
-Kiekvienai CpG pozicijai palyginami reumatoidinio artrito ir kontrolinės grupės mėginiai.
-Apskaičiuojamos p reikšmės, efekto dydžiai, metilinimo lygio vidurkiai grupėse ir reikšmingumo žymos.
-Sukuriamas filtruotas `annmatrix` objektas ir rezultatų lentelė tolesnei analizei.
+Šis skriptas pašalina iš ankstesnių kokybės kontrolės žingsnių nustatytus išskirtinius mėginius.
+Kiekvienai CpG pozicijai Wilcoxon testu palyginamos reumatoidinio artrito ir kontrolinės grupės.
+Apskaičiuojamos p reikšmės, efekto dydžiai, FDR metodu koreguotos p reikšmės ir reikšmingumo žyma.
+Sukuriamas filtruotas annmatrix objektas be išskirtinių mėginių ir rezultatų lentelė tolesnei analizei.
+**Šį skriptą reikią paleisti patį pirmą lokaliai laikant originalius rhead.rds duomenis scripts/task2**
+**tik tuomet visi sekantys skriptai veiks, jų eiliškumas nesvarbus.**
 
 ### `scripts/task2/02_top10_plots.R`
 
-Šiame skripte atrenkamos CpG pozicijos su mažiausiomis p reikšmėmis.
-Paruošiami TOP10 CpG pozicijų grafikai.
-Grafikai naudojami vizualiai įvertinti metilinimo skirtumus tarp reumatoidinio artrito ir kontrolinės grupės mėginių.
+Šiame skripte atrenkamos statistiškai reikšmingos CpG pozicijos, kurių p_adj < 0.05.
+Iš jų pasirenkama TOP10 CpG pozicijų pagal didžiausią absoliutų efekto dydį.
+Kiekvienai TOP10 CpG pozicijai sukuriamas boxplot grafikas su atskirais mėginių taškais ir grupės vidurkiu.
+Grafikai išsaugomi aplanke plots/task2 ir naudojami vizualiai įvertinti metilinimo skirtumus tarp RA ir kontrolinės grupės.
 
 ### `scripts/task2/03_pvalue_histogram.R`
 
-Šiame skripte sudaroma p reikšmių histograma.
-Ji naudojama įvertinti bendrą statistinių testų rezultatų pasiskirstymą.
-Pagal histogramą galima spręsti, ar duomenyse matomas signalas, susijęs su grupių skirtumais.
+Šiame skripte sudaroma visų CpG pozicijų p reikšmių histograma.
+p reikšmės suskirstomos į intervalus nuo 0 iki 1 ir vizualizuojamos naudojant ggplot2.
+Histograma naudojama įvertinti bendrą statistinių testų rezultatų pasiskirstymą
+ir patikrinti, ar stebimas mažų p reikšmių perteklius, rodo galimus skirtumus tarp RA ir kontrolinės grupės.
 
 ### `scripts/task2/04_volcano_plot.R`
 
