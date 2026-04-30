@@ -100,9 +100,10 @@ ir patikrinti, ar stebimas mažų p reikšmių perteklius, rodo galimus skirtumu
 
 ### `scripts/task2/04_volcano_plot.R`
 
-Šiame skripte sudaromas volcano plot grafikas.
-Grafike pavaizduojamas CpG pozicijų efekto dydis ir statistinis reikšmingumas.
-Šis grafikas padeda išskirti CpG pozicijas, kurios turi ir didesnį metilinimo skirtumą, ir mažesnę p reikšmę.
+Šiame skripte sudaromi volcano grafikai, skirti įvertinti CpG pozicijų metilinimo skirtumus tarp RA ir kontrolės grupių.
+Grafikuose kartu vaizduojamas efekto dydis ir statistinis reikšmingumas, todėl galima matyti, kurios CpG pozicijos ne tik statistiškai skiriasi tarp grupių, bet ir turi didesnį metilinimo pokytį.
+Teigiamos efekto dydžio reikšmės rodo didesnį metilinimą RA grupėje, o neigiamos – kontrolės grupėje.
+Papildomai pateikiamas grafikas su FDR koreguotomis p reikšmėmis.
 
 ### `scripts/task2/05_manhattan_plot.R`
 Šiame skripte sudaromi Manhattan grafikai, vaizduojantys CpG vietų statistinį reikšmingumą (-log10(p)) genome. CpG pozicijos išdėstomos pagal jų vietą chromosomose, leidžiant įvertinti, ar reikšmingesni metilinimo skirtumai tarp RA ir kontrolės grupių telkiasi tam tikrose genomo srityse ar chromosomose.
