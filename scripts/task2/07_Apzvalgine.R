@@ -11,7 +11,6 @@ res <- readRDS("results.rds")
 top_cpg <- res[order(res$p_value), "CpG"][1:10]
 
 #Metilinimo reiksmes
-
 beta <- obj[top_cpg, ]
 
 # Paverčiam į data frame
@@ -22,7 +21,6 @@ colnames(df) <- c("CpG", "Sample", "beta")
 df$celltype <- obj$celltype[df$Sample]
 df$diagnosis <- obj$diagnosis[df$Sample]
 
-df
 
 # Grafikas
 p <- ggplot(df, aes(x = celltype, y = beta, colour = diagnosis)) +
@@ -39,7 +37,7 @@ p <- ggplot(df, aes(x = celltype, y = beta, colour = diagnosis)) +
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 
-# Išsaugoti
+
 ggsave(
   "../../plots/task2/cpg_celltype_analysis.png",
   p,
