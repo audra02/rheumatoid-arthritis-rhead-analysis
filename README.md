@@ -81,8 +81,8 @@ Po jų pašalinimo sudaroma nauja dendrograma.
 Kiekvienai CpG pozicijai Wilcoxon testu palyginamos reumatoidinio artrito ir kontrolinės grupės.
 Apskaičiuojamos p reikšmės, efekto dydžiai, FDR metodu koreguotos p reikšmės ir reikšmingumo žyma.
 Sukuriamas filtruotas annmatrix objektas be išskirtinių mėginių ir rezultatų lentelė tolesnei analizei.
-** Šį skriptą reikią paleisti patį pirmą lokaliai laikant originalius rhead.rds duomenis scripts/task2 **
-** tik tuomet visi sekantys skriptai veiks, jų eiliškumas nesvarbus. **
+**Šį skriptą reikią paleisti patį pirmą lokaliai laikant originalius rhead.rds duomenis scripts/task2**
+**tik tuomet visi sekantys skriptai veiks, jų eiliškumas nesvarbus.**
 
 ### `scripts/task2/02_top10_plots.R`
 
