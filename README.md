@@ -105,10 +105,7 @@ Grafike pavaizduojamas CpG pozicijų efekto dydis ir statistinis reikšmingumas.
 Šis grafikas padeda išskirti CpG pozicijas, kurios turi ir didesnį metilinimo skirtumą, ir mažesnę p reikšmę.
 
 ### `scripts/task2/05_manhattan_plot.R`
-
-Šiame skripte sudaromas Manhattan plot grafikas.
-Grafike CpG pozicijos vaizduojamos pagal jų vietą genome.
-Šis grafikas leidžia įvertinti, ar stipresni signalai telkiasi tam tikrose chromosomose ar genomo srityse.
+Šiame skripte sudaromi Manhattan grafikai, vaizduojantys CpG vietų statistinį reikšmingumą (-log10(p)) genome. CpG pozicijos išdėstomos pagal jų vietą chromosomose, leidžiant įvertinti, ar reikšmingesni metilinimo skirtumai tarp RA ir kontrolės grupių telkiasi tam tikrose genomo srityse ar chromosomose.
 
 ### `scripts/task2/06_prepare_GO.R`
 
@@ -119,9 +116,7 @@ Grafike CpG pozicijos vaizduojamos pagal jų vietą genome.
 
 ### `scripts/task2/07_Apzvalgine.R`
 
-Šiame skripte atlikta papildoma apžvalginė analizė.
-Analizė skirta geriau apibendrinti gautus diferencinio metilinimo rezultatus.
-Ji padeda įvertinti, kokie bendri dėsningumai matomi po pagrindinių statistinių palyginimų.
+Šiame skripte atlikta papildoma apžvalginė analizė, skirta įvertinti, ar reikšmingiausi CpG metilinimo skirtumai tarp RA ir kontrolės grupių vienodai pasireiškia visuose ląstelių tipuose. Analizė leidžia nustatyti, ar šie skirtumai yra ląstelių tipui specifiniai ir ar jie labiau išryškėja tam tikrose ląstelių grupėse.
 
 ## Trumpas projekto rezultatų apibendrinimas
 
